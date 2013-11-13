@@ -45,39 +45,40 @@ func NewGoLogger(output *os.File) (*GoLogger, error) {
 
 func (l *GoLogger) Infoln(v ...interface{}) {
 	l.Mutex.Lock()
-	l.InfoLogger.Println(v)
+	l.InfoLogger.Println(v...)
 	l.Mutex.Unlock()
 }
 
 func (l *GoLogger) Infof(format string, v ...interface{}) {
-	l.Infoln(fmt.Sprintf(format, v))
+	l.Infoln(fmt.Sprintf(format, v...))
 }
 
 func (l *GoLogger) Warningln(v ...interface{}) {
 	l.Mutex.Lock()
-	l.WarningLogger.Println(v)
+	l.WarningLogger.Println(v...)
 	l.Mutex.Unlock()
 }
 
 func (l *GoLogger) Warningf(format string, v ...interface{}) {
-	l.Warningln(fmt.Sprintf(format, v))
+	l.Warningln(fmt.Sprintf(format, v...))
 }
 
 func (l *GoLogger) Errorln(v ...interface{}) {
 	_, file, line, _ := runtime.Caller(1)
 	caller := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+	v = append([]interface{}{caller}, v)
 	l.Mutex.Lock()
-	l.ErrorLogger.Println(caller, v)
+	l.ErrorLogger.Println(v...)
 	l.Mutex.Unlock()
 }
 
 func (l *GoLogger) Errorf(format string, v ...interface{}) {
-	l.Errorln(fmt.Sprintf(format, v))
+	l.Errorln(fmt.Sprintf(format, v...))
 }
 
 func (l *GoLogger) Fatalln(v ...interface{}) {
 	l.Mutex.Lock()
-	l.FatalLogger.Println(v)
+	l.FatalLogger.Println(v...)
 	for _, v := range getStack(false) {
 		l.FatalLogger.Println(v)
 	}
@@ -86,17 +87,17 @@ func (l *GoLogger) Fatalln(v ...interface{}) {
 }
 
 func (l *GoLogger) Fatalf(format string, v ...interface{}) {
-	l.Fatalln(fmt.Sprintf(format, v))
+	l.Fatalln(fmt.Sprintf(format, v...))
 }
 
 func (l *GoLogger) Debugln(debug bool, v ...interface{}) {
 	if debug {
 		l.Mutex.Lock()
-		l.DebugLogger.Println(v)
+		l.DebugLogger.Println(v...)
 		l.Mutex.Unlock()
 	}
 }
 
 func (l *GoLogger) Debugf(debug bool, format string, v ...interface{}) {
-	l.Debugln(debug, fmt.Sprintf(format, v))
+	l.Debugln(debug, fmt.Sprintf(format, v...))
 }
