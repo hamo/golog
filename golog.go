@@ -63,17 +63,21 @@ func (l *GoLogger) Warningf(format string, v ...interface{}) {
 	l.Warningln(fmt.Sprintf(format, v...))
 }
 
-func (l *GoLogger) Errorln(v ...interface{}) {
-	_, file, line, _ := runtime.Caller(1)
+func (l *GoLogger) errorln(v ...interface{}) {
+	_, file, line, _ := runtime.Caller(2)
 	caller := fmt.Sprintf("%s:%d", filepath.Base(file), line)
-	v = append([]interface{}{caller}, v)
+	v = append([]interface{}{caller}, v...)
 	l.Mutex.Lock()
 	l.ErrorLogger.Println(v...)
 	l.Mutex.Unlock()
 }
 
+func (l *GoLogger) Errorln(v ...interface{}) {
+	l.errorln(v...)
+}
+
 func (l *GoLogger) Errorf(format string, v ...interface{}) {
-	l.Errorln(fmt.Sprintf(format, v...))
+	l.errorln(fmt.Sprintf(format, v...))
 }
 
 func (l *GoLogger) Fatalln(v ...interface{}) {
