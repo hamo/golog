@@ -31,7 +31,7 @@ func getStack(all bool) []string {
 	return strings.Split(string(buf), "\n")
 }
 
-func NewGoLogger(output *os.File) (*GoLogger, error) {
+func NewGoLogger(output *os.File) *GoLogger {
 	logger := new(GoLogger)
 
 	logger.InfoLogger = log.New(output, "[ INFO  ]", log.LstdFlags)
@@ -40,7 +40,7 @@ func NewGoLogger(output *os.File) (*GoLogger, error) {
 	logger.FatalLogger = log.New(output, "[ FATAL ]", log.LstdFlags)
 	logger.DebugLogger = log.New(output, "[ DEBUG ]", log.LstdFlags)
 
-	return logger, nil
+	return logger
 }
 
 func (l *GoLogger) Infoln(v ...interface{}) {
