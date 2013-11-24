@@ -94,14 +94,25 @@ func (l *GoLogger) Fatalf(format string, v ...interface{}) {
 	l.Fatalln(fmt.Sprintf(format, v...))
 }
 
+func (l *GoLogger) debugln(v ...interface{}) {
+	_, file, line, _ := runtime.Caller(2)
+	caller := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+	v = append([]interface{}{caller}, v...)
+	l.Mutex.Lock()
+	l.DebugLogger.Println(v...)
+	l.Mutex.Unlock()
+}
+
 func (l *GoLogger) Debugln(debug bool, v ...interface{}) {
-	if debug {
-		l.Mutex.Lock()
-		l.DebugLogger.Println(v...)
-		l.Mutex.Unlock()
+	if !debug {
+		return
 	}
+	l.debugln(v...)
 }
 
 func (l *GoLogger) Debugf(debug bool, format string, v ...interface{}) {
-	l.Debugln(debug, fmt.Sprintf(format, v...))
+	if !debug {
+		return
+	}
+	l.debugln(fmt.Sprintf(format, v...))
 }
