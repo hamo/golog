@@ -31,7 +31,7 @@ func getStack(all bool) []string {
 	return strings.Split(string(buf), "\n")
 }
 
-func NewGoLogger(output *os.File) *GoLogger {
+func New(output *os.File) *GoLogger {
 	logger := new(GoLogger)
 
 	logger.InfoLogger = log.New(output, "[ INFO  ]", log.LstdFlags)
