@@ -11,7 +11,9 @@ import (
 )
 
 type GoLogger struct {
-	Mutex         sync.Mutex
+	Mutex   sync.Mutex
+	flDebug bool
+
 	InfoLogger    *log.Logger
 	WarningLogger *log.Logger
 	ErrorLogger   *log.Logger
@@ -40,7 +42,13 @@ func New(output *os.File) *GoLogger {
 	logger.FatalLogger = log.New(output, "[ FATAL ]", log.LstdFlags)
 	logger.DebugLogger = log.New(output, "[ DEBUG ]", log.LstdFlags)
 
+	logger.flDebug = false
+
 	return logger
+}
+
+func (l *GoLogger) SetDebug(flDebug bool) {
+	l.flDebug = flDebug
 }
 
 func (l *GoLogger) Infoln(v ...interface{}) {
@@ -103,15 +111,15 @@ func (l *GoLogger) debugln(v ...interface{}) {
 	l.Mutex.Unlock()
 }
 
-func (l *GoLogger) Debugln(debug bool, v ...interface{}) {
-	if !debug {
+func (l *GoLogger) Debugln(v ...interface{}) {
+	if !l.flDebug {
 		return
 	}
 	l.debugln(v...)
 }
 
-func (l *GoLogger) Debugf(debug bool, format string, v ...interface{}) {
-	if !debug {
+func (l *GoLogger) Debugf(format string, v ...interface{}) {
+	if !l.flDebug {
 		return
 	}
 	l.debugln(fmt.Sprintf(format, v...))
